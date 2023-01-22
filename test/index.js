@@ -10,8 +10,6 @@ const httpBody = require('..')
 
 const closeServer = server => promisify(server.close)
 
-const createServer = fn => http.createServer(fn)
-
 const listenServer = async (server, ...args) => {
   server.listen(...args)
   await once(server, 'listening')
@@ -19,15 +17,15 @@ const listenServer = async (server, ...args) => {
   return `http://${address === '::' ? '[::]' : address}:${port}`
 }
 
-const getServer = async (t, handler) => {
-  const server = createServer(handler)
+const createServer = async (t, handler) => {
+  const server = http.createServer(handler)
   const url = await listenServer(server)
   t.teardown(() => closeServer(server))
   return url
 }
 
 test('text', async t => {
-  const url = await getServer(t, async (req, res) => {
+  const url = await createServer(t, async (req, res) => {
     res.end(await httpBody.text(req))
   })
 
@@ -36,17 +34,18 @@ test('text', async t => {
 })
 
 test('json', async t => {
-  const url = await getServer(t, async (req, res) => {
+  const url = await createServer(t, async (req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify(await httpBody.json(req)))
+    const json = await httpBody.json(req)
+    res.end(JSON.stringify(json))
   })
 
-  const { body } = await got.post(url, { json: { foo: 'bar' } })
+  const { body } = await got.post(url, { body: JSON.stringify({ foo: 'bar' }) })
   t.is(body, JSON.stringify({ foo: 'bar' }))
 })
 
 test('buffer', async t => {
-  const url = await getServer(t, async (req, res) => {
+  const url = await createServer(t, async (req, res) => {
     res.end(await httpBody.buffer(req))
   })
 
