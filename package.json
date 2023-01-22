@@ -1,6 +1,6 @@
 {
   "name": "http-body",
-  "description": "I'm a lazy",
+  "description": "Parse the http.IncomingMessage body into text/json/buffer",
   "homepage": "https://nicedoc.io/Kikobeats/http-body",
   "version": "0.0.0",
   "main": "src/index.js",
@@ -30,6 +30,7 @@
     "raw-body": "~2.5.1"
   },
   "devDependencies": {
+    "got": "11",
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
     "ava": "latest",
@@ -43,7 +44,6 @@
     "prettier-standard": "latest",
     "simple-git-hooks": "latest",
     "standard": "latest",
-    "standard-markdown": "latest",
     "standard-version": "latest"
   },
   "engines": {
@@ -56,7 +56,7 @@
     "clean": "rm -rf node_modules",
     "contributors": "(npx git-authors-cli && npx finepack && git add package.json && git commit -m 'build: contributors' --no-verify) || true",
     "coverage": "c8 report --reporter=text-lcov > coverage/lcov.info",
-    "lint": "standard-markdown README.md && standard",
+    "lint": "standard",
     "postrelease": "npm run release:tags && npm run release:github && (ci-publish || npm publish --access=public)",
     "prerelease": "npm run update:check && npm run contributors",
     "pretest": "npm run lint",
@@ -76,9 +76,6 @@
   "nano-staged": {
     "*.js,!*.min.js,": [
       "prettier-standard"
-    ],
-    "*.md": [
-      "standard-markdown"
     ],
     "package.json": [
       "finepack"
