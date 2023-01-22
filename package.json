@@ -30,7 +30,6 @@
     "raw-body": "~2.5.1"
   },
   "devDependencies": {
-    "got": "11",
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
     "ava": "latest",
@@ -39,6 +38,7 @@
     "conventional-github-releaser": "latest",
     "finepack": "latest",
     "git-authors-cli": "latest",
+    "got": "11",
     "nano-staged": "latest",
     "npm-check-updates": "latest",
     "prettier-standard": "latest",
