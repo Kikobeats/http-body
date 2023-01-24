@@ -25,10 +25,6 @@
     "parsing",
     "text"
   ],
-  "dependencies": {
-    "content-type": "~1.0.4",
-    "raw-body": "~2.5.1"
-  },
   "devDependencies": {
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",

@@ -1,37 +1,34 @@
 'use strict'
 
-const contentType = require('content-type')
-const getRawBody = require('raw-body')
+const rawBody = req =>
+  new Promise((resolve, reject) => {
+    let bytes = 0
+    const chunks = []
+
+    req.on('error', reject)
+    req.on('data', chunk => {
+      chunks.push(chunk)
+      bytes += chunk.length
+    })
+
+    req.on('end', () => resolve(Buffer.concat(chunks, bytes)))
+  })
 
 const rawBodyMap = new WeakMap()
 
-const LIMIT = '1mb'
-
-const text = async (req, { limit = LIMIT, encoding } = {}) => {
-  const type = req.headers['content-type'] || 'text/plain'
-  const length = req.headers['content-length']
-
+const text = async req => {
   const body = rawBodyMap.get(req)
   if (body) return body
-
-  if (encoding === undefined) {
-    encoding = contentType.parse(type).parameters.charset
-  }
-
-  const buffer = await getRawBody(req, { limit, length, encoding })
+  const buffer = await rawBody(req)
   rawBodyMap.set(req, buffer)
   return buffer.toString()
 }
 
-const buffer = async (req, { limit = LIMIT } = {}) => {
-  const length = req.headers['content-length']
-
+const buffer = async req => {
   const body = rawBodyMap.get(req)
   if (body) return body
-
-  const buffer = await getRawBody(req, { limit, length })
+  const buffer = await rawBody(req)
   rawBodyMap.set(req, buffer)
-
   return buffer
 }
 
