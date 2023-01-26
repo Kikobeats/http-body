@@ -2,7 +2,7 @@
   "name": "http-body",
   "description": "Parse the http.IncomingMessage body into text/json/buffer",
   "homepage": "https://nicedoc.io/Kikobeats/http-body",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "src/index.js",
   "author": {
     "email": "josefrancisco.verdu@gmail.com",
