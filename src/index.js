@@ -12,22 +12,21 @@ const rawBody = async req => {
 
 const rawBodyMap = new WeakMap()
 
-const text = async req => {
-  const body = rawBodyMap.get(req)
-  if (body) return body
-  const buffer = await rawBody(req)
-  rawBodyMap.set(req, buffer)
-  return buffer.toString()
-}
-
 const buffer = async req => {
-  const body = rawBodyMap.get(req)
-  if (body) return body
-  const buffer = await rawBody(req)
-  rawBodyMap.set(req, buffer)
-  return buffer
+  let body = rawBodyMap.get(req)
+  if (body !== undefined) return body
+  body = await rawBody(req)
+  rawBodyMap.set(req, body)
+  return body
 }
 
-const json = (req, opts) => text(req, opts).then(JSON.parse)
+const text = req => buffer(req).then(buffer => buffer.toString())
 
-module.exports = { text, json, buffer }
+const json = req => text(req).then(JSON.parse)
+
+const urlencoded = req =>
+  text(req).then(text =>
+    Object.fromEntries(new URLSearchParams(text).entries())
+  )
+
+module.exports = { text, json, buffer, urlencoded }

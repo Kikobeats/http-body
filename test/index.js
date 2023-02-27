@@ -35,7 +35,6 @@ test('text', async t => {
 
 test('json', async t => {
   const url = await createServer(t, async (req, res) => {
-    res.writeHead(200, { 'Content-Type': 'application/json' })
     const json = await httpBody.json(req)
     res.end(JSON.stringify(json))
   })
@@ -60,4 +59,16 @@ test('buffer', async t => {
 
   const { body } = await got.post(url, { body: Buffer.from('hello world') })
   t.is(body, 'hello world')
+})
+
+test('urlencoded', async t => {
+  const url = await createServer(t, async (req, res) => {
+    res.end(JSON.stringify(await httpBody.urlencoded(req)))
+  })
+
+  const { body } = await got.post(url, {
+    form: new URLSearchParams([['foo', 'bar']])
+  })
+
+  t.is(body, JSON.stringify({ foo: 'bar' }))
 })
