@@ -1,18 +1,14 @@
 'use strict'
 
-const rawBody = req =>
-  new Promise((resolve, reject) => {
-    let bytes = 0
-    const chunks = []
-
-    req.on('error', reject)
-    req.on('data', chunk => {
-      chunks.push(chunk)
-      bytes += chunk.length
-    })
-
-    req.on('end', () => resolve(Buffer.concat(chunks, bytes)))
-  })
+const rawBody = async req => {
+  const chunks = []
+  let bytes = 0
+  for await (const chunk of req) {
+    chunks.push(chunk)
+    bytes += chunk.length
+  }
+  return Buffer.concat(chunks, bytes)
+}
 
 const rawBodyMap = new WeakMap()
 
