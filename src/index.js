@@ -42,7 +42,7 @@ const buffer = async (stream, opts) => {
  * @param {import('stream').Readable} stream - The stream
  * @param {Partial<{ limit: number }>} [opts={limit:1048576}] - parsing options.
  * @param {number} [opts.limit] - The max body size allowed (default is 1 MB).
- * @returns {Promise<Buffer>} The parsed value as text.
+ * @returns {Promise<string>} The parsed value as text.
  */
 const text = (stream, opts) =>
   buffer(stream, opts).then(buffer => buffer.toString())
@@ -53,7 +53,7 @@ const text = (stream, opts) =>
  * @param {import('stream').Readable} stream - The stream
  * @param {Partial<{ limit: number }>} [opts={limit:1048576}] - parsing options.
  * @param {number} [opts.limit] - The max body size allowed (default is 1 MB).
- * @returns {Promise<Buffer>} The parsed value as json.
+ * @returns {Promise<object>} The parsed value as json.
  */
 const json = (stream, opts) => text(stream, opts).then(JSON.parse)
 
@@ -63,7 +63,7 @@ const json = (stream, opts) => text(stream, opts).then(JSON.parse)
  * @param {import('stream').Readable} stream - The stream
  * @param {Partial<{ limit: number }>} [opts={limit:1048576}] - parsing options.
  * @param {number} [opts.limit] - The max body size allowed (default is 1 MB).
- * @returns {Promise<Buffer>} The parsed value as URLSearchParams.
+ * @returns {Promise<URLSearchParams>} The parsed value as URLSearchParams.
  */
 const urlencoded = (stream, opts) =>
   text(stream, opts).then(text => new URLSearchParams(text))
