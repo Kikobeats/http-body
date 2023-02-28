@@ -15,7 +15,7 @@ $ npm install http-body --save
 ## Usage
 
 ```js
-const { buffer, text, json } = require('http-body')
+const { buffer, text, json, urlencoded } = require('http-body')
 
 /* into buffer */
 await buffer(req)
@@ -28,7 +28,50 @@ await text(req)
 /* into json */
 await json(req)
 // => { price: '9.99' }
+
+/* from url encoded */
+await urlencoded(req)
+// => { price: '9.99' }
 ```
+
+The max body size allowed by default is 1 MB. That can be customize as second argument:
+
+```js
+const { buffer, text, json, urlencoded } = require('http-body')
+const bytes = require('bytes')
+
+await buffer(req, { limit: bytes('1mb')})
+// => TypeError: body size (1112140) is over the limit (1048576)
+```
+
+## API
+
+### text(req, options)
+
+Converts request body to string.
+
+### urlencoded(req, options)
+
+Parses request body using `new URLSearchParams`.
+
+### json(req, options)
+
+Parses request body using `JSON.parse`.
+
+### buffer(req, options)
+
+Minimal body parsing without any formatting.
+
+## Options
+
+### limit
+
+Type: `number`<br>
+Default: `1048576`
+
+The max body size allowed.
+
+If the request body exceeds it, it throws an error.
 
 ## License
 
