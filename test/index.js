@@ -65,14 +65,14 @@ test('.buffer', async t => {
 
 test('.urlencoded', async t => {
   const url = await createServer(t, async (req, res) => {
-    res.end(JSON.stringify(await httpBody.urlencoded(req)))
+    res.end((await httpBody.urlencoded(req)).toString())
   })
 
   const { body } = await got.post(url, {
     form: new URLSearchParams([['foo', 'bar']])
   })
 
-  t.is(body, JSON.stringify({ foo: 'bar' }))
+  t.is(body, 'foo=bar')
 })
 
 test('throw an error if size is over the limit', async t => {

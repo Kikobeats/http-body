@@ -29,9 +29,9 @@ await text(req)
 await json(req)
 // => { price: '9.99' }
 
-/* from url encoded */
+/* into URLSearchParams */
 await urlencoded(req)
-// => { price: '9.99' }
+// => 'price=9.99'
 ```
 
 The max body size allowed by default is 1 MB. That can be customize as second argument:

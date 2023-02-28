@@ -33,8 +33,6 @@ const text = (req, opts) => buffer(req, opts).then(buffer => buffer.toString())
 const json = (req, opts) => text(req, opts).then(JSON.parse)
 
 const urlencoded = (req, opts) =>
-  text(req, opts).then(text =>
-    Object.fromEntries(new URLSearchParams(text).entries())
-  )
+  text(req, opts).then(text => new URLSearchParams(text))
 
 module.exports = { text, json, buffer, urlencoded }
