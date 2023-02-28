@@ -81,5 +81,6 @@
   "simple-git-hooks": {
     "commit-msg": "npx commitlint --edit",
     "pre-commit": "npx nano-staged"
-  }
+  },
+  "types": "src/index.d.ts"
 }
