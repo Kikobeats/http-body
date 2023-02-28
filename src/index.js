@@ -1,10 +1,10 @@
 'use strict'
 
-const rawBody = (req, { limit = 1048576 } = {}) =>
+const rawBody = (stream, { limit = 1048576 } = {}) =>
   new Promise((resolve, reject) => {
     const chunks = []
     let bytes = 0
-    req
+    stream
       .on('error', reject)
       .on('end', () => resolve(Buffer.concat(chunks, bytes)))
       .on('data', chunk => {
@@ -20,19 +20,52 @@ const rawBody = (req, { limit = 1048576 } = {}) =>
 
 const rawBodyMap = new WeakMap()
 
-const buffer = async (req, opts) => {
-  let body = rawBodyMap.get(req)
+/**
+ * Read the stream body as buffer.
+ *
+ * @param {import('stream').Readable} stream - The stream
+ * @param {Partial<{ limit: number }>} [opts={limit:1048576}] - parsing options.
+ * @param {number} [opts.limit] - The max body size allowed (default is 1 MB).
+ * @returns {Promise<Buffer>} The parsed value as buffer.
+ */
+const buffer = async (stream, opts) => {
+  let body = rawBodyMap.get(stream)
   if (body !== undefined) return body
-  body = await rawBody(req, opts)
-  rawBodyMap.set(req, body)
+  body = await rawBody(stream, opts)
+  rawBodyMap.set(stream, body)
   return body
 }
 
-const text = (req, opts) => buffer(req, opts).then(buffer => buffer.toString())
+/**
+ * Read the stream body as a string.
+ *
+ * @param {import('stream').Readable} stream - The stream
+ * @param {Partial<{ limit: number }>} [opts={limit:1048576}] - parsing options.
+ * @param {number} [opts.limit] - The max body size allowed (default is 1 MB).
+ * @returns {Promise<Buffer>} The parsed value as text.
+ */
+const text = (stream, opts) =>
+  buffer(stream, opts).then(buffer => buffer.toString())
 
-const json = (req, opts) => text(req, opts).then(JSON.parse)
+/**
+ * Read the stream body as JSON.
+ *
+ * @param {import('stream').Readable} stream - The stream
+ * @param {Partial<{ limit: number }>} [opts={limit:1048576}] - parsing options.
+ * @param {number} [opts.limit] - The max body size allowed (default is 1 MB).
+ * @returns {Promise<Buffer>} The parsed value as json.
+ */
+const json = (stream, opts) => text(stream, opts).then(JSON.parse)
 
-const urlencoded = (req, opts) =>
-  text(req, opts).then(text => new URLSearchParams(text))
+/**
+ * Read the stream body as URLSearchParams.
+ *
+ * @param {import('stream').Readable} stream - The stream
+ * @param {Partial<{ limit: number }>} [opts={limit:1048576}] - parsing options.
+ * @param {number} [opts.limit] - The max body size allowed (default is 1 MB).
+ * @returns {Promise<Buffer>} The parsed value as URLSearchParams.
+ */
+const urlencoded = (stream, opts) =>
+  text(stream, opts).then(text => new URLSearchParams(text))
 
 module.exports = { text, json, buffer, urlencoded }
