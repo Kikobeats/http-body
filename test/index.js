@@ -1,7 +1,9 @@
 'use strict'
 
+const { randomBytes } = require('crypto')
 const { promisify } = require('util')
 const { once } = require('events')
+const bytes = require('bytes')
 const http = require('http')
 const test = require('ava')
 const got = require('got')
@@ -24,7 +26,7 @@ const createServer = async (t, handler) => {
   return url
 }
 
-test('text', async t => {
+test('.text', async t => {
   const url = await createServer(t, async (req, res) => {
     res.end(await httpBody.text(req))
   })
@@ -33,9 +35,8 @@ test('text', async t => {
   t.is(body, 'hello world')
 })
 
-test('json', async t => {
+test('.json', async t => {
   const url = await createServer(t, async (req, res) => {
-    res.writeHead(200, { 'Content-Type': 'application/json' })
     const json = await httpBody.json(req)
     res.end(JSON.stringify(json))
   })
@@ -53,11 +54,46 @@ test('json', async t => {
   }
 })
 
-test('buffer', async t => {
+test('.buffer', async t => {
   const url = await createServer(t, async (req, res) => {
     res.end(await httpBody.buffer(req))
   })
 
   const { body } = await got.post(url, { body: Buffer.from('hello world') })
   t.is(body, 'hello world')
+})
+
+test('.urlencoded', async t => {
+  const url = await createServer(t, async (req, res) => {
+    res.end((await httpBody.urlencoded(req)).toString())
+  })
+
+  const { body } = await got.post(url, {
+    form: new URLSearchParams([['foo', 'bar']])
+  })
+
+  t.is(body, 'foo=bar')
+})
+
+test('throw an error if size is over the limit', async t => {
+  t.plan(3)
+
+  const url = await createServer(t, async (req, res) => {
+    try {
+      await httpBody.text(req)
+    } catch (error) {
+      t.is(error.name, 'TypeError')
+      res.statusCode = 413
+      res.end()
+    }
+  })
+
+  const text = randomBytes(bytes('2MB')).toString('base64')
+
+  const { body, statusCode } = await got.post(url, {
+    body: text,
+    throwHttpErrors: false
+  })
+  t.is(statusCode, 413)
+  t.is(body, '')
 })

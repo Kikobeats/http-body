@@ -25,14 +25,11 @@
     "parsing",
     "text"
   ],
-  "dependencies": {
-    "content-type": "~1.0.4",
-    "raw-body": "~2.5.1"
-  },
   "devDependencies": {
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
     "ava": "latest",
+    "bytes": "latest",
     "c8": "latest",
     "ci-publish": "latest",
     "conventional-github-releaser": "latest",
