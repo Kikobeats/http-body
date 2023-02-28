@@ -1,6 +1,6 @@
 {
   "name": "http-body",
-  "description": "Parse the http.IncomingMessage body into text/json/buffer",
+  "description": "Parse the stream body into text/json/buffer/urlencoded.",
   "homepage": "https://nicedoc.io/Kikobeats/http-body",
   "version": "1.0.2",
   "main": "src/index.js",

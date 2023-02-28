@@ -4,7 +4,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/Kikobeats/http-body.svg?style=flat-square)](https://coveralls.io/github/Kikobeats/http-body)
 [![NPM Status](https://img.shields.io/npm/dm/http-body.svg?style=flat-square)](https://www.npmjs.org/package/http-body)
 
-> Parse the http.IncomingMessage body into text/json/buffer.
+> Parse the stream body into text/json/buffer/urlencoded (437 bytes).
 
 ## Install
 
