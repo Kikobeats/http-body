@@ -5,8 +5,8 @@ type Options = {
 }
 
 export default {
-  buffer(req: IncomingRequest, options: Options): typeof buffer;
-  string(req: IncomingRequest, options: Options): string;
-  json(req: IncomingRequest, options: Options): object;
-  urlencoded(req: IncomingRequest, options: Options): object;
+  buffer(req: IncomingRequest, options?: Partial<Options>): typeof buffer;
+  string(req: IncomingRequest, options?: Partial<Options>): string;
+  json(req: IncomingRequest, options?: Partial<Options>): object;
+  urlencoded(req: IncomingRequest, options?: Partial<Options>): object;
 };
