@@ -28,6 +28,7 @@
   "devDependencies": {
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
+    "async-listen": "latest",
     "ava": "latest",
     "bytes": "latest",
     "c8": "latest",

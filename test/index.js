@@ -1,10 +1,10 @@
 'use strict'
 
+const { default: listen } = require('async-listen')
 const { randomBytes } = require('crypto')
+const { createServer } = require('http')
 const { promisify } = require('util')
-const { once } = require('events')
 const bytes = require('bytes')
-const http = require('http')
 const test = require('ava')
 const got = require('got')
 
@@ -12,22 +12,15 @@ const httpBody = require('..')
 
 const closeServer = server => promisify(server.close)
 
-const listenServer = async (server, ...args) => {
-  server.listen(...args)
-  await once(server, 'listening')
-  const { address, port } = server.address()
-  return `http://${address === '::' ? '[::]' : address}:${port}`
-}
-
-const createServer = async (t, handler) => {
-  const server = http.createServer(handler)
-  const url = await listenServer(server)
+const runServer = async (t, handler) => {
+  const server = createServer(handler)
+  const url = await listen(server)
   t.teardown(() => closeServer(server))
   return url
 }
 
 test('.text', async t => {
-  const url = await createServer(t, async (req, res) => {
+  const url = await runServer(t, async (req, res) => {
     res.end(await httpBody.text(req))
   })
 
@@ -36,7 +29,7 @@ test('.text', async t => {
 })
 
 test('.json', async t => {
-  const url = await createServer(t, async (req, res) => {
+  const url = await runServer(t, async (req, res) => {
     const json = await httpBody.json(req)
     res.end(JSON.stringify(json))
   })
@@ -55,7 +48,7 @@ test('.json', async t => {
 })
 
 test('.buffer', async t => {
-  const url = await createServer(t, async (req, res) => {
+  const url = await runServer(t, async (req, res) => {
     res.end(await httpBody.buffer(req))
   })
 
@@ -64,7 +57,7 @@ test('.buffer', async t => {
 })
 
 test('.urlencoded', async t => {
-  const url = await createServer(t, async (req, res) => {
+  const url = await runServer(t, async (req, res) => {
     res.end((await httpBody.urlencoded(req)).toString())
   })
 
@@ -78,7 +71,7 @@ test('.urlencoded', async t => {
 test('throw an error if size is over the limit', async t => {
   t.plan(3)
 
-  const url = await createServer(t, async (req, res) => {
+  const url = await runServer(t, async (req, res) => {
     try {
       await httpBody.text(req)
     } catch (error) {
