@@ -3,14 +3,14 @@
 const { default: listen } = require('async-listen')
 const { randomBytes } = require('crypto')
 const { createServer } = require('http')
-const { promisify } = require('util')
 const bytes = require('bytes')
 const test = require('ava')
 const got = require('got')
 
 const httpBody = require('..')
 
-const closeServer = server => promisify(server.close)
+const closeServer = server =>
+  require('util').promisify(server.close.bind(server))()
 
 const runServer = async (t, handler) => {
   const server = createServer(handler)
