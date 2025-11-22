@@ -2,7 +2,7 @@
   "name": "http-body",
   "description": "Parse the stream body into text/json/buffer/urlencoded.",
   "homepage": "https://github.com/Kikobeats/http-body",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "main": "src/index.js",
   "author": {
     "email": "josefrancisco.verdu@gmail.com",
