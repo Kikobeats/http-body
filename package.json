@@ -1,6 +1,6 @@
 {
   "name": "http-body",
-  "description": "Parse the stream body into text/json/buffer/urlencoded.",
+  "description": "Parse an HTTP request body stream into text, JSON, Buffer, or URL-encoded form data.",
   "homepage": "https://github.com/Kikobeats/http-body",
   "version": "1.0.19",
   "main": "src/index.js",
@@ -20,16 +20,18 @@
   "keywords": [
     "body",
     "buffer",
+    "form",
     "http",
     "json",
     "parse",
-    "parsing",
-    "text"
+    "request",
+    "stream",
+    "text",
+    "urlencoded"
   ],
   "devDependencies": {
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
-    "@ksmithut/prettier-standard": "latest",
     "async-listen": "latest",
     "ava": "latest",
     "bytes": "latest",
@@ -76,7 +78,7 @@
   },
   "nano-staged": {
     "*.js": [
-      "prettier-standard",
+      "npx @kikobeats/prettier-standard",
       "standard --fix"
     ],
     "package.json": [
